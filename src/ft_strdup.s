@@ -9,12 +9,14 @@ section .text
 	extern __errno_location
 
 ft_strdup:
+	push	rbp
+	mov	rbp, rsp
+
 	cmp	rdi, NULL
 	je	.set_einval
 
-	push	rbp
-	mov	rbp, rsp
 	push	rdi
+	push	0
 
 	call ft_strlen
 
@@ -22,22 +24,22 @@ ft_strdup:
 	inc	rdi
 	call malloc wrt ..plt
 
+	add	rsp, 8
+	pop	rsi
+
 	cmp	rax, NULL
-	je	.malloc_error
+	je	.done
 
 	mov	rdi, rax
-	pop	rsi
 	call ft_strcpy
 	
+.done:
 	leave
 	ret
 
 .set_einval:
 	call	__errno_location wrt ..plt
 	mov	dword [rax], EINVAL
-
-.malloc_error:
-	mov	rsp, rbp
-	pop	rbp
 	xor	rax, rax
+	leave
 	ret
