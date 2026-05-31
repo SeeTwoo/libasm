@@ -9,10 +9,6 @@ ft_read:
 	jl	.error
 	ret
 
-.shit:
-	mov	rax, -1
-	ret
-
 .error:
 	neg	rax
 	push	rax
