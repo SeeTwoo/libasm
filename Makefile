@@ -50,6 +50,11 @@ check: all
 	rm tests_libasm
 
 quick: all
-	cc -Wall -Wextra -Werror -g3 -Iincludes main.c libasm.a
+	cc -Wall -Wextra -Werror -g3 -Iincludes quick.c libasm.a
+
+main: all
+	cc -Wall -Wextra -Werror -g3 -Iincludes main.c libasm.a -o test_main
+	./test_main
+	rm test_main
 
 .PHONY: all clean fclean re check
