@@ -1,3 +1,5 @@
+//hello
+#include <fcntl.h>
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
@@ -79,22 +81,74 @@ int	strcmp_tests(void)
 {
 	int	passed = 0;
 
-	passed += strcmp_tester(empty_string, empty_string,
-			"ft_strcmp fails with two empty strings\n");
-	passed += strcmp_tester(empty_string, a_string,
-			"ft_strcmp fails with an empty string in first\n");
-	passed += strcmp_tester(a_string, empty_string,
-			"ft_strcmp fails with an empty string in second\n");
-	passed += strcmp_tester(a_string, b_string,
-			"ft_strcmp fails with identical strings\n");
-	passed += strcmp_tester(a_string, different,
-			"ft_strcmp fails with different strings\n");
+	passed += strcmp_tester(empty_string, empty_string, "ft_strcmp fails with two empty strings\n");
+	passed += strcmp_tester(empty_string, a_string, "ft_strcmp fails with an empty string in first\n");
+	passed += strcmp_tester(a_string, empty_string, "ft_strcmp fails with an empty string in second\n");
+	passed += strcmp_tester(a_string, b_string, "ft_strcmp fails with identical strings\n");
+	passed += strcmp_tester(a_string, different, "ft_strcmp fails with different strings\n");
 	if (passed != STRCMP_TEST_NUMBER)
 		return 0;
 	return 1;
 }
 
-#define TEST_NUMBER 3
+#define WRITE_TEST_NUMBER 3
+int	write_tests(void)
+{
+	char	*msg = "hello, this is written by ft_write\n";
+	int	saved_errno;
+
+	ft_write(1, msg, strlen(msg));
+	ft_write(-1, "hello\n", 6);
+	saved_errno = errno;
+	write(-1, "hello\n", 6);
+	if  (saved_errno == errno)
+		return 1;
+	puts("ft_write mishandles errno\n");
+	return 0;
+}
+
+int	read_tests(void)
+{
+	int	fd = open("main.c", O_RDONLY);
+	char	buffer[10];
+
+	if (fd == -1) {
+		printf("%s COULD NOT OPEN A FILE TO READ, TEST ABORTED\n %s", RED, RESET);
+		return 1;
+	}
+	buffer[read(fd, buffer, 7)] = '\0';
+	if (strcmp(buffer, "//hello") == 0)
+		return 1;
+	return 0;
+}
+
+int	strdup_tester(char const *s, char const *msg)
+{
+	char	*dest = ft_strdup(s);
+
+	if (!dest) {
+		printf("%s MALLOC FAILED, STRDUP TEST ABORTED\n %s", RED, RESET);
+		return 1;
+	}
+	if (strcmp(dest, s) == 0)
+		return 1;
+	puts(msg);
+	return 0;
+}
+
+#define STRDUP_TEST_NUMBER 2
+int	strdup_tests(void)
+{
+	int	passed = 0;
+
+	passed += strdup_tester(empty_string, "ft_strdup does not work with empty strings\n");
+	passed += strdup_tester(big_string, "ft_strdup does not work with big strings\n");
+	if (passed != STRDUP_TEST_NUMBER)
+		return 0;
+	return 1;
+}
+
+#define TEST_NUMBER 6
 int	main(void)
 {
 	int	passed = 0;
@@ -102,6 +156,9 @@ int	main(void)
 	passed += strlen_tests();
 	passed += strcpy_tests();
 	passed += strcmp_tests();
+	passed += write_tests();
+	passed += read_tests();
+	passed += strdup_tests();
 	if (passed != TEST_NUMBER)
 		printf("%s FAILED %s\n", RED, RESET);
 	else
